@@ -30,10 +30,8 @@ app.get('/api/ping', (req, res) => {
 /*************** No Auth **********************/
 
 app.use(routes.questions)
-app.use(routes.responses)
+// app.use(routes.responses)
 
-// app.use(routes.logIn)
-// app.use(routes.signUp)
 
 /**************** Auth ************************/
 
@@ -49,6 +47,5 @@ const handleErrors = (err, req, res, next) => {
 }
 
 app.use(handleErrors);
-// module.exports = app
 
-app.listen(7878)
+module.exports = app

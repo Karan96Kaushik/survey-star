@@ -2,16 +2,9 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 // Define collection and schema
-let Responses = new Schema(
+let Questions = new Schema(
   {
-    _questionID: {
-      required:true,
-      type:mongoose.Schema.Types.ObjectId
-    },
-
-    response:String,
-    multiResponse:Array,
-
+    questions:Array,
     // text:String,
     // options:Array,
     // fileLocation:String,
@@ -22,14 +15,13 @@ let Responses = new Schema(
     //   required:true,
     //   type:mongoose.Schema.Types.ObjectId
     // }
-
   },
   {
     timestamps: { createdAt: "createdTime", updatedAt: "updateTime" },
-    collection: "Responses",
+    collection: "Questions",
   }
 );
 
 module.exports = {
-  Responses: mongoose.model("Responses", Responses),
+  Questions: mongoose.model("Questions", Questions),
 };

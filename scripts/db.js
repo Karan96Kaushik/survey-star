@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
-const {Clients} = require("../models/Questions");
 const crypto = require("crypto");
-const {Utils} = require("../models/Responses");
+const {Questions} = require("../models/Questions");
 
 // 'mongodb://karan:karan12345@bayonetbaron.com:27017/tms?authSource=admin'
 
@@ -32,6 +31,11 @@ mongoose
 		// const save = await Clients.updateMany({clientType:"litigation"}, {clientType:"Litigation"});
 
 		// console.log(save)
+
+		  let count = await Questions.countDocuments({})
+
+		  console.log("Num of saved questions:", count)
+		  global.questionCount = count
   
   
 		},

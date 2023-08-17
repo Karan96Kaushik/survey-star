@@ -1,76 +1,79 @@
-const router     = new (require('express')).Router()
+const router = new (require('express')).Router()
 const mongoose = require("mongoose");
-const {Users} = require("../models/Questions")
-const {Users} = require("../models/Responses")
+const { Questions } = require("../models/Questions")
+const { Responses } = require("../models/Responses")
 let crypto = require('crypto');
+const {
+	getAllFiles,
+	uploadToS3,
+	getFilePath
+} = require("../modules/useS3");
+
+
 
 router.get("/api/question", async (req, res) => {
 	let _;
 
-	let data = await Questions.find({
-		orderID:parseInt(req.body.currentID) + 1
+	// console.log(req.query, '----------')
+
+	let data = await Questions.findOne({
+		// orderID:parseInt(req.query.currentID) + 1
 	})
-		.sort({order: -1})
+	.skip(getRandomInt(global.questionCount - 1))
 
-	data = data.map(d => d._doc).map(async f => {
+	data = data._doc
 
-		if (f.type == 'file') {
-			let fName = getRandom(f.fileLocation)
-			f.flink = await getFilePath(fName)
-		}
-		return f
+	data.fileRef = fileLocs[fileLocs.length - 1]
+	console.log(data.fileRef)
+	data.file = await getFilePath(getRandomFile(data.fileRef))
 
-	})
-
-	res.json(data._doc)
+	res.json(data)
 })
 
 
-router.get("/api/answer", async (req, res) => {
+router.post("/api/response", async (req, res) => {
 	let _;
 
 	let answers 
 
+	console.log(req.body, req.data, req.params, req.rawBody)
+
 	let data = await Responses.create({
-		orderID:parseInt(req.body.currentID) + 1
-	})
-		.sort({order: -1})
-
-	data = data.map(d => d._doc).map(async f => {
-
-		if (f.type == 'file') {
-			let fName = getRandom(f.fileLocation)
-			f.flink = await getFilePath(fName)
-		}
-		return f
-
+		...req.body
 	})
 
-	res.json(data._doc)
+	res.send("OK")
 })
 
 
-// router.post("/api/files", async (req, res) => {
-// 	try {
-// 		const file = await getFilePath(req.body.fileName)
-// 		// console.log(file)
-// 		res.json({file})
-// 	} catch (err) {
-// 		console.log(err)
-// 		res.status(404).send()
-// 	}
-// })
 
-// router.get("/api/audiofiles", async (req, res) => {
-// 	let _;
 
-// 	let files = await getAllFiles(leads.leadID + "/")
-// 	files = files.map(f => f.Key)
-// 	// leads.files = files
-	
-// 	// const save = await Users.create({...req.body.info, isActive:true});
+// range - [0 to max]
+const getRandomInt = (max) => {
+  return Math.floor(Math.random() * (max + 1))
+}
 
-// 	res.json(files)
-// })
+const fileLocs = [
+	"RF1", "RF2", "RF3", "RF4", 
+	"SA1", "SA2",  "SA3", "SA4", 
+	"NA1", "NA2",  "NA3", "NA4", 
+]
+
+const files = {}
+
+fileLocs.forEach(async f => {
+	let fileList = await getAllFiles(f)
+	fileList = fileList.map(f => f.Key)
+
+	files[f] = fileList
+})
+
+const getRandomFile = (fileLoc) => {
+	return files[fileLoc][getRandomInt(files[fileLoc].length - 1)]
+}
+
+
+
+
 
 module.exports = router
