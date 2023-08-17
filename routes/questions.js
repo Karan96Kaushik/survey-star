@@ -34,9 +34,7 @@ router.get("/api/question", async (req, res) => {
 router.post("/api/response", async (req, res) => {
 	let _;
 
-	let answers 
-
-	console.log(req.body, req.data, req.params, req.rawBody)
+	console.log(req.body)
 
 	let data = await Responses.create({
 		...req.body
