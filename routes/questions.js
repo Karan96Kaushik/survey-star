@@ -46,7 +46,7 @@ router.post("/api/response", async (req, res) => {
 
 	console.log(req.body)
 
-	if (Object.keys(req.body).length < 3) {
+	if (Object.keys(req.body).length < 3 && !Object.keys(req.body).includes('name') && !Object.keys(req.body).includes('feedback')) {
 		return res.send('KO')
 	}
 
