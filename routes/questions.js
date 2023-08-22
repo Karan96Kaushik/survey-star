@@ -9,6 +9,20 @@ const {
 	getFilePath
 } = require("../modules/useS3");
 
+const fs = require('fs');
+const path = require("path");
+
+function throughDirectory(Directory, files) {
+  fs.readdirSync(Directory).forEach(File => {
+      const Absolute = path.join(Directory, File);
+      console.log(Absolute, fs.statSync(Absolute).isDirectory())
+      if (fs.statSync(Absolute).isDirectory()) 
+      	throughDirectory(Absolute, files);
+      else
+       files.push(Absolute);
+  });
+  return files
+}
 
 
 router.get("/api/question", async (req, res) => {
@@ -24,8 +38,13 @@ router.get("/api/question", async (req, res) => {
 	data = data._doc
 
 	data.fileRef = fileLocs[fileLocs.length - 1]
-	console.log(data.fileRef)
-	data.file = await getFilePath(getRandomFile(data.fileRef))
+
+	let files = throughDirectory(__dirname + '/../saved_midis/', [])
+	files = files.filter(f => f.includes('.mp3'))
+
+	// console.debug(files[getRandomInt(50)])
+
+	data.file = await fs.readFileSync(files[getRandomInt(50)], {encoding: 'base64'}); // await getFilePath(getRandomFile(data.fileRef))
 
 	res.json(data)
 })
@@ -59,12 +78,12 @@ const fileLocs = [
 
 const files = {}
 
-fileLocs.forEach(async f => {
-	let fileList = await getAllFiles(f)
-	fileList = fileList.map(f => f.Key)
+// fileLocs.forEach(async f => {
+// 	let fileList = await getAllFiles(f)
+// 	fileList = fileList.map(f => f.Key)
 
-	files[f] = fileList
-})
+// 	files[f] = fileList
+// })
 
 const getRandomFile = (fileLoc) => {
 	return files[fileLoc][getRandomInt(files[fileLoc].length - 1)]

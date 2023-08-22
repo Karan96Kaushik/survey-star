@@ -4,6 +4,7 @@ const app     = express()
 const bodyParser = require('body-parser')
 const timings = require('server-timings')
 const morgan = require('morgan')
+const cors = require('cors');
 // const passport = require('passport')
 
 const routes  = require('./routes');
@@ -14,6 +15,7 @@ function errorHandler (err, req, res, next) {
 	res.render('error', { error: err })
 }
 
+app.use(cors());
 app.use(bodyParser.raw({limit: '25mb'}) );
 app.use(express.json({limit: '25mb'}));
 app.use(bodyParser.urlencoded({limit: "25mb",extended: false}));
