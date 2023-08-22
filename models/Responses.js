@@ -11,7 +11,7 @@ let Responses = new Schema(
 
     fileRef:String,
     response:String,
-    multiResponse:Array,
+    // multiResponse:Array,
 
     // text:String,
     // options:Array,
@@ -27,6 +27,7 @@ let Responses = new Schema(
   },
   {
     timestamps: { createdAt: "createdTime", updatedAt: "updateTime" },
+    strict:false,
     collection: "Responses",
   }
 );
