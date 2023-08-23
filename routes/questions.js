@@ -13,48 +13,61 @@ const fs = require('fs');
 const path = require("path");
 
 
-router.get("/api/question", async (req, res) => {
-	let _;
+router.get("/api/question", async (req, res) => { 
+	try {
+		let _;
 
-	// console.log(req.query, '----------')
+		// console.log(req.query, '----------')
 
-	let data = await Questions.findOne({
-		// orderID:parseInt(req.query.currentID) + 1
-	})
-	.skip(getRandomInt(global.questionCount - 1))
+		let data = await Questions.findOne({
+			// orderID:parseInt(req.query.currentID) + 1
+		})
+		.skip(getRandomInt(global.questionCount - 1))
 
-	data = data._doc
+		data = data._doc
 
-	data.fileRef = fileLocs[getRandomInt(fileLocs.length - 1)]
+		data.fileRef = fileLocs[getRandomInt(fileLocs.length - 1)]
 
-	let files = fs.readdirSync(__dirname + '/../MIDIs/' + data.fileRef)
-	files = files.filter(f => f.includes('.mp3'))
+		let files = fs.readdirSync(__dirname + '/../MIDIs/' + data.fileRef)
+		files = files.filter(f => f.includes('.mp3'))
 
-	const file_name = __dirname + '/../MIDIs/' + data.fileRef + '/' + files[getRandomInt(files.length)]
+		const file_name = __dirname + '/../MIDIs/' + data.fileRef + '/' + files[getRandomInt(files.length-1)]
 
-	data.file = await fs.readFileSync(
-		file_name, 
-		{encoding: 'base64'}
-	); // await getFilePath(getRandomFile(data.fileRef))
+		data.file = await fs.readFileSync(
+			file_name, 
+			{encoding: 'base64'}
+		); // await getFilePath(getRandomFile(data.fileRef))
 
-	res.json(data)
+		res.json(data)
+	}
+	catch (err) {
+		console.error(err)
+		res.json({})
+	}
 })
 
 
 router.post("/api/response", async (req, res) => {
-	let _;
+	try {
 
-	console.log(req.body)
+		let _;
 
-	if (Object.keys(req.body).length < 3 && !Object.keys(req.body).includes('name') && !Object.keys(req.body).includes('feedback')) {
-		return res.send('KO')
+		console.log(req.body)
+
+		if (Object.keys(req.body).length < 3 && !Object.keys(req.body).includes('name') && !Object.keys(req.body).includes('feedback')) {
+			return res.send('KO')
+		}
+
+		let data = await Responses.create({
+			...req.body
+		})
+
+		res.send("OK")
 	}
-
-	let data = await Responses.create({
-		...req.body
-	})
-
-	res.send("OK")
+	catch (err) {
+		console.error(err)
+		res.json({})
+	}
 })
 
 
