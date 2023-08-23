@@ -19,12 +19,14 @@ router.get("/api/question", async (req, res) => {
 
 		// console.log(req.query, '----------')
 
-		let data = await Questions.findOne({
-			// orderID:parseInt(req.query.currentID) + 1
-		})
-		.skip(getRandomInt(global.questionCount - 1))
+		// let data = await Questions.findOne({
+		// 	// orderID:parseInt(req.query.currentID) + 1
+		// })
+		// .skip(getRandomInt(global.questionCount - 1))
 
-		data = data._doc
+		// data = data._doc
+
+		let data = {}
 
 		data.fileRef = fileLocs[getRandomInt(fileLocs.length - 1)]
 
